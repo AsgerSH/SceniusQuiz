@@ -283,8 +283,22 @@ h1 {
 }
 
 .section-badge.done {
-  background: rgba(122, 158, 126, 0.15);
+  background: rgba(139, 99, 80, 0.1);
+  color: var(--text-muted);
+}
+
+.section-badge.done.passed {
+  background: rgba(122, 158, 126, 0.18);
   color: #3D6B42;
+}
+
+.checkmark {
+  margin-right: 0.3em;
+  font-weight: 600;
+}
+
+.card-passed {
+  border-color: rgba(122, 158, 126, 0.5);
 }
 
 /* Result */
