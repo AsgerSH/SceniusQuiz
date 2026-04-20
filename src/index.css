@@ -363,6 +363,16 @@ h1 {
   color: var(--text-muted);
 }
 
+.site-subtitle {
+  display: block;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+  opacity: 0.75;
+}
+
 .screen {
   flex: 1;
 }

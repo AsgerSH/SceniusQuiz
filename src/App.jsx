@@ -59,6 +59,7 @@ export default function App() {
         >
           Scenia
         </span>
+        <span className="site-subtitle">Meditations quizzen</span>
       </header>
       {activeSection
         ? <Quiz section={activeSection} onHome={() => setActiveId(null)} />
