@@ -38,13 +38,13 @@ export default function App() {
   const sections = useMemo(() => parseMarkdown(quizText), [])
 
   const [activeId, setActiveId] = useState(() => {
-    const stored = localStorage.getItem('sceniaquiz_active')
+    const stored = localStorage.getItem('sceniusquiz_active')
     return stored !== null ? parseInt(stored) : null
   })
 
   useEffect(() => {
-    if (activeId !== null) localStorage.setItem('sceniaquiz_active', activeId)
-    else localStorage.removeItem('sceniaquiz_active')
+    if (activeId !== null) localStorage.setItem('sceniusquiz_active', activeId)
+    else localStorage.removeItem('sceniusquiz_active')
   }, [activeId])
 
   const activeSection = activeId !== null ? sections.find(s => s.id === activeId) : null
@@ -57,7 +57,7 @@ export default function App() {
           style={activeSection ? { cursor: 'pointer' } : {}}
           onClick={() => activeSection && setActiveId(null)}
         >
-          Scenia
+          Scenius
         </span>
         <span className="site-subtitle">Meditations quizzen</span>
       </header>

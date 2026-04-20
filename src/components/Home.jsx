@@ -1,6 +1,6 @@
 function loadProgress(sectionId, questions) {
   try {
-    const stored = JSON.parse(localStorage.getItem(`sceniaquiz_section_${sectionId}`))
+    const stored = JSON.parse(localStorage.getItem(`sceniusquiz_section_${sectionId}`))
     if (!stored) return null
     if (stored.phase === 'result') {
       const score = stored.answers.reduce(

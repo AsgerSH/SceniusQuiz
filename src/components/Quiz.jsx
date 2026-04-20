@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 function loadState(sectionId) {
-  try { return JSON.parse(localStorage.getItem(`sceniaquiz_section_${sectionId}`)) }
+  try { return JSON.parse(localStorage.getItem(`sceniusquiz_section_${sectionId}`)) }
   catch { return null }
 }
 
@@ -14,8 +14,8 @@ export default function Quiz({ section, onHome }) {
   const [selected, setSelected] = useState(null)
 
   useEffect(() => {
-    if (phase === 'intro') localStorage.removeItem(`sceniaquiz_section_${id}`)
-    else localStorage.setItem(`sceniaquiz_section_${id}`, JSON.stringify({ phase, index, answers }))
+    if (phase === 'intro') localStorage.removeItem(`sceniusquiz_section_${id}`)
+    else localStorage.setItem(`sceniusquiz_section_${id}`, JSON.stringify({ phase, index, answers }))
   }, [phase, index, answers, id])
 
   const current = questions[index]
@@ -48,7 +48,7 @@ export default function Quiz({ section, onHome }) {
   }
 
   function restart() {
-    localStorage.removeItem(`sceniaquiz_section_${id}`)
+    localStorage.removeItem(`sceniusquiz_section_${id}`)
     setPhase('intro')
     setIndex(0)
     setSelected(null)
