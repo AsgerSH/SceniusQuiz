@@ -177,7 +177,6 @@ h1 {
 }
 
 .back-btn {
-  margin-top: 1.25rem;
   background: none;
   border: none;
   font-family: 'Inter', sans-serif;
@@ -190,6 +189,103 @@ h1 {
 
 .back-btn:hover:not(:disabled) { color: var(--accent); }
 .back-btn:disabled { opacity: 0.35; cursor: default; }
+
+.quiz-footer {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.quiz-footer .back-btn:only-child {
+  margin-left: auto;
+}
+
+/* Intro actions */
+.intro-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Home screen */
+.home-wrap {
+  max-width: 580px;
+  width: 100%;
+  animation: fadeUp 0.4s ease both;
+}
+
+.home-intro {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.04em;
+}
+
+.section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.section-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.1s ease;
+  box-shadow: 0 2px 12px rgba(42, 26, 14, 0.04);
+}
+
+.section-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px rgba(42, 26, 14, 0.08);
+}
+
+.section-card:active { transform: scale(0.99); }
+
+.section-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.section-title {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 0.3rem;
+}
+
+.section-meta {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.section-badge {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.2rem 0.55rem;
+  border-radius: 20px;
+}
+
+.section-badge.inprogress {
+  background: rgba(139, 99, 80, 0.12);
+  color: var(--accent);
+}
+
+.section-badge.done {
+  background: rgba(122, 158, 126, 0.15);
+  color: #3D6B42;
+}
 
 /* Result */
 .result-card {

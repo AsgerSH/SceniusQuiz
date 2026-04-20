@@ -1,13 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-export default function Quiz({ questions }) {
-  const [phase, setPhase] = useState('intro')
-  const [index, setIndex] = useState(0)
+function loadState(sectionId) {
+  try { return JSON.parse(localStorage.getItem(`sceniaquiz_section_${sectionId}`)) }
+  catch { return null }
+}
+
+export default function Quiz({ section, onHome }) {
+  const { id, title, questions } = section
+
+  const [phase, setPhase]     = useState(() => loadState(id)?.phase   ?? 'intro')
+  const [index, setIndex]     = useState(() => loadState(id)?.index   ?? 0)
+  const [answers, setAnswers] = useState(() => loadState(id)?.answers ?? [])
   const [selected, setSelected] = useState(null)
-  const [answers, setAnswers] = useState([])
+
+  useEffect(() => {
+    if (phase === 'intro') localStorage.removeItem(`sceniaquiz_section_${id}`)
+    else localStorage.setItem(`sceniaquiz_section_${id}`, JSON.stringify({ phase, index, answers }))
+  }, [phase, index, answers, id])
 
   const current = questions[index]
   const displaySelected = selected !== null ? selected : answers[index] ?? null
+  const score = answers.reduce((acc, ans, i) => acc + (ans === questions[i]?.correctIndex ? 1 : 0), 0)
+  const pct = Math.round((score / questions.length) * 100)
 
   function start() {
     setPhase('quiz')
@@ -23,11 +37,8 @@ export default function Quiz({ questions }) {
 
     setTimeout(() => {
       setSelected(null)
-      if (index + 1 >= questions.length) {
-        setPhase('result')
-      } else {
-        setIndex(v => v + 1)
-      }
+      if (index + 1 >= questions.length) setPhase('result')
+      else setIndex(v => v + 1)
     }, 500)
   }
 
@@ -37,30 +48,25 @@ export default function Quiz({ questions }) {
   }
 
   function restart() {
+    localStorage.removeItem(`sceniaquiz_section_${id}`)
     setPhase('intro')
     setIndex(0)
     setSelected(null)
     setAnswers([])
   }
 
-  const score = answers.reduce((acc, ans, i) => acc + (ans === questions[i].correctIndex ? 1 : 0), 0)
-  const pct = Math.round((score / questions.length) * 100)
-
   return (
-    <div className="app">
-      <header className="site-header">
-        <span className="site-title">Scenia</span>
-      </header>
-
+    <>
       {phase === 'intro' && (
         <div className="screen">
           <div className="card">
-            <span className="label">Meditationsquiz</span>
-            <h1>Hvad ved du om meditation?</h1>
-            <p className="subtitle">
-              {questions.length} spørgsmål · Vælg det svar, der føles rigtigt
-            </p>
-            <button className="btn" onClick={start}>Start quiz</button>
+            <span className="label">Afsnit {id}</span>
+            <h1>{title}</h1>
+            <p className="subtitle">{questions.length} spørgsmål · Vælg det svar, der føles rigtigt</p>
+            <div className="intro-actions">
+              <button className="btn" onClick={start}>Start</button>
+              <button className="btn-link" onClick={onHome}>Alle afsnit</button>
+            </div>
           </div>
         </div>
       )}
@@ -69,13 +75,10 @@ export default function Quiz({ questions }) {
         <div className="screen">
           <div key={index} className="card quiz-card">
             <div className="progress-track">
-              <div
-                className="progress-fill"
-                style={{ width: `${(index / questions.length) * 100}%` }}
-              />
+              <div className="progress-fill" style={{ width: `${(index / questions.length) * 100}%` }} />
             </div>
             <div className="question-meta">
-              <span className="label" style={{ margin: 0 }}>{current.section}</span>
+              <span className="label" style={{ margin: 0 }}>{title}</span>
               <span className="q-count">{index + 1} / {questions.length}</span>
             </div>
             <h2 className="question-text">{current.text}</h2>
@@ -91,15 +94,14 @@ export default function Quiz({ questions }) {
                 </button>
               ))}
             </div>
-            {index > 0 && (
-              <button
-                className="back-btn"
-                onClick={goBack}
-                disabled={selected !== null}
-              >
-                ← Forrige spørgsmål
-              </button>
-            )}
+            <div className="quiz-footer">
+              {index > 0 && (
+                <button className="back-btn" onClick={goBack} disabled={selected !== null}>
+                  ← Forrige
+                </button>
+              )}
+              <button className="back-btn" onClick={onHome}>Alle afsnit</button>
+            </div>
           </div>
         </div>
       )}
@@ -107,7 +109,7 @@ export default function Quiz({ questions }) {
       {phase === 'result' && (
         <div className="screen">
           <div className="card result-card">
-            <span className="label">Resultat</span>
+            <span className="label">Afsnit {id} · Resultat</span>
             <div className="score-display">
               <span className="score-number">{score}</span>
               <span className="score-denom">&nbsp;/ {questions.length}</span>
@@ -118,6 +120,7 @@ export default function Quiz({ questions }) {
               <button className="btn btn-ghost" onClick={() => setPhase('details')}>Detaljer</button>
               <button className="btn" onClick={restart}>Prøv igen</button>
             </div>
+            <button className="btn-link" style={{ marginTop: '1.25rem' }} onClick={onHome}>Alle afsnit</button>
           </div>
         </div>
       )}
@@ -126,7 +129,7 @@ export default function Quiz({ questions }) {
         <div className="screen screen-top">
           <div className="card details-card">
             <div className="details-header">
-              <span className="label" style={{ margin: 0 }}>Gennemgang</span>
+              <span className="label" style={{ margin: 0 }}>Gennemgang · Afsnit {id}</span>
               <button className="btn-link" onClick={() => setPhase('result')}>Tilbage</button>
             </div>
             <div className="details-list">
@@ -136,17 +139,14 @@ export default function Quiz({ questions }) {
                 const wasCorrect = userAnswer === correct
                 return (
                   <div key={qi} className={`detail-item${wasCorrect ? ' detail-correct' : ' detail-wrong'}`}>
-                    <p className="detail-section">{q.section}</p>
+                    <p className="detail-section">{title}</p>
                     <p className="detail-question">{q.text}</p>
                     <div className="detail-answers">
                       {q.answers.map((ans, ai) => {
                         const isCorrect = ai === correct
                         const isUserWrong = ai === userAnswer && !wasCorrect
                         return (
-                          <div
-                            key={ai}
-                            className={`detail-answer${isCorrect ? ' is-correct' : ''}${isUserWrong ? ' is-wrong' : ''}`}
-                          >
+                          <div key={ai} className={`detail-answer${isCorrect ? ' is-correct' : ''}${isUserWrong ? ' is-wrong' : ''}`}>
                             {ans}
                           </div>
                         )
@@ -162,12 +162,12 @@ export default function Quiz({ questions }) {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 
 function resultMessage(pct) {
-  if (pct >= 90) return 'Fremragende! Du har en dyb forståelse for meditation.'
+  if (pct >= 90) return 'Fremragende! Du har en dyb forståelse for dette afsnit.'
   if (pct >= 70) return 'Godt gået! Du er godt på vej i din forståelse.'
   if (pct >= 50) return 'En god start. Der er altid mere at opdage.'
   return 'Meditation er en livslang rejse. Bliv ved med at udforske.'
